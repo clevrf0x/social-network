@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 SECRET_KEY = unsafe_get_env("SECRET_KEY")
-DEBUG = unsafe_get_env("DEBUG")
+DEBUG = (unsafe_get_env("DEBUG") == 'True')
 
 ALLOWED_HOSTS = json.loads(unsafe_get_env("ALLOWED_HOSTS"))
 
@@ -24,7 +24,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'users.apps.UsersConfig'
+    'rest_framework',
+
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -114,3 +116,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom Settings 
 AUTH_USER_MODEL = "users.AppUser"
+
+# DRF Configs
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'core.exceptions.app_exception_handler',
+}
+

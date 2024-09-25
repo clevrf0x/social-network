@@ -55,7 +55,7 @@ services:
       - '${DOCKER_API_PORT_FORWARD}:8000' 
     volumes:
       - '${DOCKER_API_VOLUME:-.:/app}'
-    command: gunicorn --bind 0.0.0.0:8000 core.wsgi:application
+    command: gunicorn --bind 0.0.0.0:8000 --access-logfile - --error-logfile - core.wsgi:application
     networks:
       - internal_network
 
