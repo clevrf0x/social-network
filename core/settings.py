@@ -123,6 +123,12 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.ScopedRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'auth': unsafe_get_env("AUTH_RATELIMIT"),
+    }
 }
 
 access_expiry = int(os.environ.get("JWT_ACCESS_KEY_TIMEOUT", 2))

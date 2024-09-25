@@ -62,7 +62,7 @@ Navigate to the `docs` folder in the code repository, where you'll find a Postma
 
 - For enhanced security, the `postgres` database is not exposed to localhost. It is only accessible within Docker's internal network, meaning external access is restricted, and it can only be accessed through the Django server.
 - All critical components of the application, including secret keys, passwords, allowed hosts, and debug mode, are managed through the `.env` file.
-- Request rate limiting is implemented based on IP, with a default limit of 50 requests per minute for login endpoints, configurable via the `.env` file.
+- Request rate limiting is implemented based on IP, with a default limit of 200 requests per hour for login endpoints, configurable via the `.env` file.
 - The application is protected by CORS, allowing access only from whitelisted domains.
 
 ## Architecture (TODO)
