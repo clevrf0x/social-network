@@ -36,7 +36,8 @@ This project involves creating an API for a social networking application using 
 2. **Set Up Environment Variables:**
 
    ```bash
-   # The values in .env.example are sufficient for testing. However, for production, make sure to update the keys accordingly.
+   # The values in .env.example are sufficient for testing. 
+   # However, for production, make sure to update the keys accordingly.
    cp .env.example .env
    ```
 
@@ -71,9 +72,9 @@ Navigate to the `docs` folder in the code repository, where you'll find a Postma
 
 ## Usage
 
-- Install the dependencies as outlined in the [Installation](#installation) section.
-- Set up and run the project.
-- Use the included Postman collection to easily test all API endpoints.
+1. Install the dependencies as outlined in the [Installation](#installation) section.
+2. Set up and run the project.
+3. Use the included Postman collection to easily test all API endpoints.
 
 ## Notes
 
