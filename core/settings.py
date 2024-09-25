@@ -1,5 +1,6 @@
-import json
+import json, os
 from pathlib import Path
+from datetime import timedelta
 from utils.env import unsafe_get_env
 
 # Setup environment variables
@@ -119,6 +120,17 @@ AUTH_USER_MODEL = "users.AppUser"
 
 # DRF Configs
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'core.exceptions.app_exception_handler',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+access_expiry = int(os.environ.get("JWT_ACCESS_KEY_TIMEOUT", 2))
+refresh_expiry = int(os.environ.get("JWT_REFRESH_KEY_TIMEOUT", 1))
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=access_expiry),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=refresh_expiry),
+    "SIGNING_KEY": unsafe_get_env("JWT_SECRET_KEY"),
 }
 
