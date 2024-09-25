@@ -7,9 +7,7 @@ This project involves creating an API for a social networking application using 
 ## Table of Contents
 
 - [Installation](#installation)
-- [API Documentation](#api-documentation)
-- [Design Choices](#design-choices)
-- [Features](#features)
+- [Documentation](#documentation)
 - [Architecture](#architecture)
 - [Security](#security)
 - [Usage](#usage)
@@ -54,26 +52,10 @@ This project involves creating an API for a social networking application using 
    make run
    ```
 
-## API Documentation
+## Documentation
 
 Navigate to the `docs` folder in the code repository, where you'll find a Postman collection. You can import this collection into Postman for testing the API.
 
-
-## Design Choices
-
-- **Database:** PostgreSQL is used for its advanced features and full-text search capabilities.
-- **Caching:** Django’s built-in cache framework is employed to optimize response times.
-- **Token-based Authentication:** JWT tokens are used for secure authentication and role-based access control (RBAC).
-- **Rate Limiting:** Implemented to enhance security on sensitive endpoints.
-- **Atomic Operations:** Ensured for friend request management to handle race conditions.
-
-## Features
-
-- **User Authentication:** Email-based signup and login with token refresh capabilities.
-- **User Search:** Efficient searching through full-text search capabilities.
-- **Friend Management:** Robust friend request handling with blocking features.
-- **Activity Logging:** User activities are logged for notification purposes.
-- **Security Measures:** Sensitive data is encrypted, and common vulnerabilities are mitigated.
 
 ## Security
 
