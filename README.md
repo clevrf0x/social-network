@@ -11,7 +11,7 @@ This project involves creating an API for a social networking application using 
 - [Design Choices](#design-choices)
 - [Features](#features)
 - [Architecture](#architecture)
-- [Security][#security]
+- [Security](#security)
 - [Usage](#usage)
 - [Additional Notes](#notes)
 
