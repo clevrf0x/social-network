@@ -25,6 +25,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
@@ -32,3 +33,10 @@ class LoginSerializer(serializers.Serializer):
     def validate_email(self, value):
         # Normalize the email
         return value.strip().lower()
+
+
+class AppUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'first_name', 'last_name', 'is_active', 'date_joined']
+        read_only_fields = ['id', 'date_joined']
