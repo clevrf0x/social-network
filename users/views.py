@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.search import SearchRank, SearchQuery, SearchVector
 from django.db.models import Q
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -39,7 +40,12 @@ class LoginAPIView(APIView):
             email = serializer.validated_data['email']
             password = serializer.validated_data['password']
             user = User.objects.filter(email=email).first()
+            
             if user and user.check_password(password):
+                # Update last_login
+                user.last_login = timezone.now()
+                user.save(update_fields=['last_login'])
+
                 refresh = RefreshToken.for_user(user)
                 return Response({
                     'access': str(refresh.access_token),
