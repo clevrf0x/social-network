@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'users.apps.UsersConfig',
+    'friends.apps.FriendsConfig',
 ]
 
 MIDDLEWARE = [
@@ -117,6 +118,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom Settings 
 AUTH_USER_MODEL = "users.AppUser"
+# APPEND_SLASH=False
 
 # DRF Configs
 REST_FRAMEWORK = {
@@ -128,6 +130,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_RATES': {
         'auth': unsafe_get_env("AUTH_RATELIMIT"),
+        'friend_request': unsafe_get_env("FRIEND_REQUEST_RATELIMIT")
     }
 }
 

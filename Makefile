@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help run rebuild clean migrate makemigrations
+.PHONY: help run rebuild clean migrate makemigrations createsuperuser createstaffuser
 
 define docker_compose_cmd
 	if command -v docker compose >/dev/null 2>&1; then \
@@ -25,6 +25,8 @@ help:
 	@echo "  clean                    : Clean docker compose images and volumes for a fresh start"
 	@echo "  migrate                  : Apply all pending migrations for db"
 	@echo "  makemigrations           : Create new migrations (Optionally accept app name)"
+	@echo "  createsuperuser          : Create a superuser"
+	@echo "  createstaffuser          : Create a staff user"
 	@echo
 	@echo "Usage:"
 	@echo "  make [command]"
@@ -34,6 +36,8 @@ help:
 	@echo "  make rebuild"
 	@echo "  make migrate"
 	@echo "  make makemigrations app=users"
+	@echo "  make createsuperuser"
+	@echo "  make createstaffuser"
 	@echo
 
 run:
@@ -78,5 +82,31 @@ makemigrations:
 	else \
 		docker exec -it social-network-api-1 python manage.py makemigrations; \
 	fi; \
+	echo "Stopping containers..."; \
+	$(call docker_compose_cmd,stop);
+
+createsuperuser:
+	@echo "Creating a superuser..."
+	@echo "Ensuring containers are running..."
+	@if docker ps | grep -q social-network-api-1; then \
+		echo "Containers are already running."; \
+	else \
+		echo "Starting containers..."; \
+		$(call docker_compose_cmd,up -d); \
+	fi; \
+	docker exec -it social-network-api-1 python manage.py createsuperuser; \
+	echo "Stopping containers..."; \
+	$(call docker_compose_cmd,stop);
+
+createstaffuser:
+	@echo "Creating a staff user..."
+	@echo "Ensuring containers are running..."
+	@if docker ps | grep -q social-network-api-1; then \
+		echo "Containers are already running."; \
+	else \
+		echo "Starting containers..."; \
+		$(call docker_compose_cmd,up -d); \
+	fi; \
+	docker exec -it social-network-api-1 python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); email = input('Enter email for staff user: '); password = input('Enter password for staff user: '); User.objects.create_user(email=email, password=password, is_staff=True); print('Staff user created successfully.')"; \
 	echo "Stopping containers..."; \
 	$(call docker_compose_cmd,stop);
