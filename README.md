@@ -55,8 +55,6 @@ This project involves creating an API for a social networking application using 
 
 ## Documentation
 
-First, complete the Installation Guide.
-
 Navigate to the `docs` folder in the code repository, where you will find a Postman collection. Import this collection into Postman to test the API. 
 
 I've included a Postman script that automatically sets up the required tokens inside the collection variables after you log in successfully, minimizing manual steps needed to test the protected API endpoints.
