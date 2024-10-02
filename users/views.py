@@ -1,3 +1,4 @@
+import logging
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.search import SearchRank, SearchQuery, SearchVector
 from django.db.models import Q, Exists, OuterRef
@@ -13,6 +14,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from friends.models import BlockedUser
 from users.serializer import RegisterSerializer, LoginSerializer, AppUserSerializer
 
+logger = logging.getLogger()
 User = get_user_model()
 
 class RegisterAPIView(APIView):
@@ -28,6 +30,7 @@ class RegisterAPIView(APIView):
                 'first_name': user.first_name, 
                 'last_name': user.last_name
             }, status=status.HTTP_201_CREATED)
+        logger.info(f"User {user} registered succefully")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -52,6 +55,7 @@ class LoginAPIView(APIView):
                     'access': str(refresh.access_token),
                     'refresh': str(refresh),
                 })
+            logger.info(f"Invalid login attempt for {user}")
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

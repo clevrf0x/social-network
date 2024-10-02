@@ -1,6 +1,6 @@
 import json, os
 from pathlib import Path
-from datetime import timedelta
+from datetime import timedelta, datetime
 from utils.env import unsafe_get_env
 
 # Setup environment variables
@@ -119,6 +119,35 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Custom Settings 
 AUTH_USER_MODEL = "users.AppUser"
 # APPEND_SLASH=False
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', f'{datetime.now().date()}.log'),
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 # DRF Configs
 REST_FRAMEWORK = {

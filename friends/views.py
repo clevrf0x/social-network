@@ -1,4 +1,4 @@
-from django.conf import os
+import os, logging
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -11,6 +11,7 @@ from django.db.models import Q
 from friends.models import FriendRequest, Friendship, BlockedUser
 from friends.serializers import FriendRequestSerializer, FriendshipSerializer, BlockedUserSerializer
 
+logger = logging.getLogger()
 User = get_user_model()
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -64,15 +65,21 @@ class FriendRequestAPIView(APIView):
         if cache.get(cache_key):
             return Response({"detail": "You cannot send a friend request to this user yet. Please try again later."}, status=status.HTTP_429_TOO_MANY_REQUESTS)
 
-        existing_request = FriendRequest.objects.filter(sender=sender, receiver=receiver, status='PENDING').first()
-        if existing_request:
+        existing_request_from_sender = FriendRequest.objects.filter(sender=sender, receiver=receiver, status='PENDING').first()
+        if existing_request_from_sender:
             return Response({"detail": "A friend request to this user already exists."}, status=status.HTTP_400_BAD_REQUEST)
+
+        existing_request_from_receiver = FriendRequest.objects.filter(sender=receiver, receiver=sender, status='PENDING').first()
+        if existing_request_from_receiver:
+            return Response({"detail": "This user has already sent you a friend request."}, status=status.HTTP_400_BAD_REQUEST)
 
         if sender.friends.filter(id=receiver.id).exists():
             return Response({"detail": "You are already friends with this user."}, status=status.HTTP_400_BAD_REQUEST)
 
         friend_request = FriendRequest.objects.create(sender=sender, receiver=receiver)
         serializer = FriendRequestSerializer(friend_request)
+
+        logger.info(f"Friend request sent by {sender.email} to {receiver.email}")
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class FriendRequestActionAPIView(APIView):
@@ -93,8 +100,8 @@ class FriendRequestActionAPIView(APIView):
             with transaction.atomic():
                 friend_request.status = 'ACCEPTED'
                 friend_request.save()
-                Friendship.objects.create(user=friend_request.sender, friend=friend_request.receiver)
                 Friendship.objects.create(user=friend_request.receiver, friend=friend_request.sender)
+            logger.info(f"User {friend_request.receiver} accepted friend request from {friend_request.sender}")
             return Response({"detail": "Friend request accepted."}, status=status.HTTP_200_OK)
         elif action == 'reject':
             friend_request.status = 'REJECTED'
@@ -105,6 +112,7 @@ class FriendRequestActionAPIView(APIView):
             cache_key = f"friend_request_cooldown_{friend_request.sender.id}_{friend_request.receiver.id}"
             cache.set(cache_key, True, timeout)
 
+            logger.info(f"User {friend_request.receiver} rejected friend request from {friend_request.sender}")
             return Response({"detail": "Friend request rejected."}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": "Invalid action."}, status=status.HTTP_400_BAD_REQUEST)
@@ -132,10 +140,12 @@ class BlockUserAPIView(APIView):
             friend_requests.delete()
 
         BlockedUser.objects.get_or_create(user=request.user, blocked_user=user_to_block)
+        logger.info(f"User {request.user} blocked {user_to_block}")
         return Response({"detail": "User blocked successfully."}, status=status.HTTP_200_OK)
 
     def delete(self, request, user_id):
         BlockedUser.objects.filter(user=request.user, blocked_user_id=user_id).delete()
+        logger.info(f"User {request.user} unblocked {user_id}")
         return Response({"detail": "User unblocked successfully."}, status=status.HTTP_200_OK)
 
 class BlockedUserListAPIView(APIView):
